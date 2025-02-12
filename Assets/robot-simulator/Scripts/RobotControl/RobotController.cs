@@ -7,19 +7,38 @@ public class RobotController : MonoBehaviour
 
     void Start()
     {
-        ftcClient = FindObjectOfType<FTCClient>();
+        // Use FindFirstObjectByType instead of deprecated FindObjectOfType
+        ftcClient = FindFirstObjectByType<FTCClient>();
+
+        if (robotMovement == null)
+        {
+            Debug.LogError("RobotMovement script is not assigned in the inspector!");
+        }
+
+        if (ftcClient == null)
+        {
+            Debug.LogError("FTCClient script not found in the scene!");
+        }
     }
 
     void Update()
     {
-        // Local Unity Movement (for physics-based movement)
         float forwardInput = Input.GetAxis("Vertical");  // W/S keys for forward/backward
         float turnInput = Input.GetAxis("Horizontal");   // A/D keys for turning
 
-        robotMovement.MoveRobot(forwardInput);
-        robotMovement.TurnRobot(turnInput);
+        if (robotMovement != null)
+        {
+            robotMovement.MoveRobot(forwardInput, turnInput);
+        }
 
-        // Send Commands to FTC Java
+        if (ftcClient != null)
+        {
+            HandleFTCCommands();
+        }
+    }
+
+    void HandleFTCCommands()
+    {
         if (Input.GetKeyDown(KeyCode.W))
         {
             ftcClient.SendCommand("MOVE_FORWARD");

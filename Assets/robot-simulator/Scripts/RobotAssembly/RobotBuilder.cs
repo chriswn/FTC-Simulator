@@ -1,6 +1,5 @@
 using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.EventSystems;
 
 public class RobotBuilder : MonoBehaviour
 {
@@ -42,44 +41,33 @@ public class RobotBuilder : MonoBehaviour
     {
         if (previewPart != null)
         {
-            previewPart.GetComponent<Collider>().enabled = true; // Enable physics
+            Transform snapPoint = FindClosestSnapPoint(previewPart.transform.position);
+            if (snapPoint != null)
+            {
+                previewPart.transform.position = snapPoint.position;
+                previewPart.transform.rotation = snapPoint.rotation;
+            }
+            
+            previewPart.GetComponent<Collider>().enabled = true;
             previewPart = null;
             selectedPart = null;
         }
     }
 
-    void PlacePart()
-{
-    if (previewPart != null)
+    Transform FindClosestSnapPoint(Vector3 position)
     {
-        Transform snapPoint = FindClosestSnapPoint(previewPart.transform.position);
-        if (snapPoint != null)
+        float minDistance = float.MaxValue;
+        Transform closest = null;
+
+        foreach (Transform snapPoint in chassis.GetComponentsInChildren<Transform>())
         {
-            previewPart.transform.position = snapPoint.position;
-            previewPart.transform.rotation = snapPoint.rotation;
+            float distance = Vector3.Distance(position, snapPoint.position);
+            if (distance < minDistance && distance < 0.2f) // 0.2 = snap range
+            {
+                minDistance = distance;
+                closest = snapPoint;
+            }
         }
-        
-        previewPart.GetComponent<Collider>().enabled = true;
-        previewPart = null;
-        selectedPart = null;
+        return closest;
     }
-}
-
-Transform FindClosestSnapPoint(Vector3 position)
-{
-    float minDistance = float.MaxValue;
-    Transform closest = null;
-
-    foreach (Transform snapPoint in chassis.GetComponentsInChildren<Transform>())
-    {
-        float distance = Vector3.Distance(position, snapPoint.position);
-        if (distance < minDistance && distance < 0.2f) // 0.2 = snap range
-        {
-            minDistance = distance;
-            closest = snapPoint;
-        }
-    }
-    return closest;
-}
-
 }

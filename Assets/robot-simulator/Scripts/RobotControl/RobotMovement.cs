@@ -28,7 +28,7 @@ public class RobotMovement : MonoBehaviour
 
     public void MoveRobot(float moveInput, float turnInput)
     {
-        if (rb.velocity.magnitude < maxSpeed || moveInput < 0)  // Prevent excessive speed
+        if (rb.linearVelocity.magnitude < maxSpeed || moveInput < 0)  // Prevent excessive speed
         {
             // Apply torque for forward/backward movement
             frontLeftWheel.motorTorque = motorTorque * moveInput;

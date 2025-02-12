@@ -20,6 +20,11 @@ public class PartsLibrary : MonoBehaviour
 
     void SelectPart(GameObject part)
     {
-        FindObjectOfType<RobotBuilder>().SelectPart(part);
+        // Use FindFirstObjectByType instead of deprecated FindObjectOfType
+        RobotBuilder robotBuilder = FindFirstObjectByType<RobotBuilder>();
+        if (robotBuilder != null)
+        {
+            robotBuilder.SelectPart(part);
+        }
     }
 }
